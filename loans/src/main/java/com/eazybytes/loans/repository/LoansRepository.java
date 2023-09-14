@@ -12,5 +12,7 @@ public interface LoansRepository extends CrudRepository<Loans, Long> {
 
 	
 	List<Loans> findByCustomerIdOrderByStartDtDesc(int customerId);
+	
+	List<Loans> findByCustomerId(int customerId);
 
 }
