@@ -5,6 +5,8 @@ package com.eazybytes.accounts.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,6 +50,8 @@ public class AccountsController {
 	
 	@Autowired LoansFeignClient loansFeignClient;
 	
+	private static final Logger logger = LoggerFactory.getLogger(AccountsController.class);
+	
 	@PostMapping("/myAccount")
 	public Accounts getAccountDetails(@RequestBody Customer customer) {
 
@@ -74,8 +78,10 @@ public class AccountsController {
 	@Retry(name = "retryForCustomerSupportApp", fallbackMethod = "myCustomerDetailsFallback")
 	public CustomerDetails myCustomerDetails(@RequestBody Customer customer) {
 		Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId());
+		logger.info("start");
 		List<Loans> loans = loansFeignClient.getListOfLoans(customer);
 		List<Cards> cards = cardsFeignClient.getListOfCards(customer);
+		logger.info("end");
 
 		CustomerDetails customerDetails = new CustomerDetails();
 		customerDetails.setAccounts(accounts);
